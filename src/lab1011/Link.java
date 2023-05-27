@@ -1,4 +1,4 @@
-package lab10;
+package lab1011;
 
 public class Link implements Comparable<Link>{
 	public String ref;

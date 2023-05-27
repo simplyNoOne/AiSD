@@ -1,13 +1,11 @@
-package lab10;
+package lab1011;
 
-import java.security.KeyPair;
 import java.util.*;
 import java.util.Map.Entry;
 
 public class Graph {
 	int arr[][];
-	int p[][];
-	int d[][];
+
 	//TODO? Collection to map Document to index of vertex 
 	// You can change it
 	HashMap<String,Integer> name2Int;
@@ -21,7 +19,6 @@ public class Graph {
 	public Graph(SortedMap<String,Document> internet){
 		int size=internet.size();
 		arr=new int[size][size];
-		d = new int[size][size];
 		// TODO
 
 		name2Int = new HashMap<>();
@@ -47,7 +44,7 @@ public class Graph {
 	}
 
 	public String bfs(String start) {
-		// TODO
+
 		if(arr.length == 0)
 			return null;
 		int pos;
@@ -111,7 +108,6 @@ public String actualDFS(int pos,  boolean[] visited){
 
 
 	public int connectedComponents() {
-		// TODO
 		DisjointSetForest forest = new DisjointSetForest(arrDoc.length);
 		for(int i = 0; i < arrDoc.length; i++){
 			for( int j = 0; j < arrDoc.length; j++){
@@ -121,4 +117,74 @@ public String actualDFS(int pos,  boolean[] visited){
 		}
 		return forest.countSets();
 	}
+
+
+	int minDistance(int distance[], boolean visited[])
+	{
+		int minDist = Integer.MAX_VALUE;
+		int minDistID = -1;
+
+		for (int v = 0; v < distance.length; v++)
+			if (!visited[v] && distance[v] < minDist) {
+				minDist = distance[v];
+				minDistID = v;
+			}
+		return minDistID;
+	}
+
+
+	public String DijkstraSSSP(String startVertexStr) {
+
+		if (arr.length == 0)
+			return null;
+		int vertexID;
+		try {
+			vertexID = name2Int.get(startVertexStr);
+		} catch (NullPointerException ex) {
+			return null;
+		}
+
+		boolean[] visited = new boolean[arr.length];
+		int[] distances = new int[arr.length];
+		String[] paths = new String[arr.length];
+		paths[vertexID] = arrDoc[vertexID].getKey();
+		Arrays.fill(distances, Integer.MAX_VALUE);
+		distances[vertexID] = 0;
+
+		int visitedCount = 0;
+
+		while(visitedCount != arr.length)
+		{
+			int minDistID = minDistance(distances, visited);
+			visitedCount++;
+
+			if(minDistID == -1) {
+				continue;
+			}
+			visited[minDistID] = true;
+
+			for( int i = 0; i < arr.length; i++)
+			{
+				if(visited[i])
+					continue;
+				if (distances[minDistID] + arr[minDistID][i] < distances[i] &&  arr[minDistID][i] != Integer.MAX_VALUE)	//in case of overflow, this would return true
+				{
+					distances[i] = distances[minDistID] + arr[minDistID][i];
+					paths[i] = paths[minDistID] + "->" + arrDoc[i].getKey();
+				}
+			}
+		}
+
+		StringBuilder result = new StringBuilder();
+		for( int i  = 0; i < arr.length; i++){
+			if(visited[i])
+				result.append(paths[i] + "=" + distances[i] +"\n");
+			else
+				result.append("no path to " + arrDoc[i].getKey() + "\n");
+		}
+
+		return result.toString();
+	}
+
+
 }

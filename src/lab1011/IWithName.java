@@ -1,4 +1,4 @@
-package lab10;
+package lab1011;
 
 public interface IWithName{
 	String getName();
